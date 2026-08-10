@@ -2,7 +2,7 @@
 
 A standalone Databricks reference implementation that combines a FastMCP
 server, Massive Stocks data, Lakebase Postgres/pgvector, an Agent Bricks agent,
-and a small activity dashboard. It is isolated from the weather reference app.
+and a small activity dashboard.
 
 ## Architecture
 
