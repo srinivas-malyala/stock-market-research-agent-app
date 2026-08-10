@@ -1,0 +1,7 @@
+command: ["gunicorn", "--bind", "0.0.0.0:8000", "app:app"]
+env:
+  - name: LAKEBASE_SECRET_SCOPE
+    value: database
+  - name: LAKEBASE_SECRET_KEY
+    value: lakebase-url
+

@@ -1,0 +1,11 @@
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const date=v=>v?new Date(v).toLocaleString():'—';
+async function load(){const d=await fetch('/api/overview').then(r=>r.json());
+ document.querySelector('#watchlist').innerHTML=d.watchlist.length?d.watchlist.map(x=>`<div class="ticker"><div><b>${esc(x.ticker)}</b><button data-remove="${esc(x.ticker)}">×</button></div><span class="muted">${esc(x.name||'Profile pending sync')}</span><div class="price">${x.close?'$'+Number(x.close).toFixed(2):'—'}</div><span class="${Number(x.change_percent)>=0?'up':'down'}">${x.change_percent==null?'Sync with agent':Number(x.change_percent).toFixed(2)+'%'}</span></div>`).join(''):'<p class="muted">Ask the agent or use the form to start a watchlist.</p>';
+ document.querySelector('#news').innerHTML=d.news.length?d.news.map(x=>`<div class="item"><span class="tag">${esc(x.ticker)} · ${esc(x.sentiment||'NEWS')}</span><a href="${esc(x.article_url||'#')}" target="_blank">${esc(x.title)}</a><small> · ${date(x.published_at)}</small></div>`).join(''):'<p class="muted">No synced articles yet.</p>';
+ document.querySelector('#notes').innerHTML=d.notes.length?d.notes.map(x=>`<div class="item"><span class="tag">${esc(x.ticker)}</span><b>${esc(x.title)}</b><small> · ${date(x.created_at)}</small></div>`).join(''):'<p class="muted">No saved notes.</p>';
+ document.querySelector('#reports').innerHTML=d.reports.length?d.reports.map(x=>`<div class="item"><b>${esc(x.title)}</b><small> · ${esc((x.tickers||[]).join(', '))}</small></div>`).join(''):'<p class="muted">No saved reports.</p>';
+ document.querySelector('#activity').innerHTML=d.activity.length?d.activity.map(x=>`<div class="item"><span class="tag">${esc(x.status)}</span><b>${esc(x.tool_name)}</b><br><small>${date(x.started_at)} · ${esc(x.duration_ms)} ms</small></div>`).join(''):'<p class="muted">Tool calls will appear here.</p>';
+ document.querySelectorAll('[data-remove]').forEach(b=>b.onclick=async()=>{await fetch('/api/watchlist/'+b.dataset.remove,{method:'DELETE'});load()});}
+document.querySelector('#ticker-form').onsubmit=async e=>{e.preventDefault();await fetch('/api/watchlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ticker:document.querySelector('#ticker').value})});e.target.reset();load()};load();
+

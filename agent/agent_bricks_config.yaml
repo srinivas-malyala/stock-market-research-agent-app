@@ -1,0 +1,31 @@
+name: signal-desk-stock-research
+description: Evidence-grounded stock research using Massive, Lakebase, and semantic context.
+system_prompt_file: system_prompt.md
+external_mcp:
+  name: stock-market-research
+  endpoint: https://<your-stock-research-mcp-app>.aws.databricksapps.com/mcp
+  transport: streamable-http
+  tools:
+    - get_stock_performance
+    - get_company_research
+    - compare_stocks
+    - get_watchlist
+    - update_watchlist
+    - save_research_note
+    - save_analysis_report
+    - semantic_research
+    - get_notable_updates
+evaluation_questions:
+  - Summarize AAPL's performance over the last 30 days and state the as-of date.
+  - Compare MSFT, AMZN, and GOOGL over the same 60-day window.
+  - What recent evidence is relevant to the thesis that regional banks are exposed to rising interest rates?
+  - Add NVDA to my Primary watchlist, then show the updated list.
+  - What notable moves or news occurred in my watchlist since my last visit?
+  - Save my confirmed TSLA thesis as a research note.
+guardrails:
+  - Never state market facts without a successful tool result.
+  - Never silently treat missing or plan-restricted fundamentals as zero.
+  - Always state source, ticker, lookback, and as-of date for price claims.
+  - Mutate watchlists or save research only on explicit user request.
+  - Separate factual evidence from interpretation and avoid guarantees.
+
